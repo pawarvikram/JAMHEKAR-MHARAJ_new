@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin />
+    <link
+      rel="stylesheet"
+      as="style"
+      onload="this.rel='stylesheet'"
+      href="https://fonts.googleapis.com/css2?display=swap&family=Noto+Serif:wght@400;500;700;900&family=Noto+Sans:wght@400;500;700;900"
+    />
+
+    <title>Temple Name — Stitch Design</title>
+    <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64," />
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              paper: '#fcf9f8',
+              ink: '#1c110d',
+              tint: '#f4eae7',
+              accent: '#f45925',
+            },
+            fontFamily: {
+              serif: ['Noto Serif', 'serif'],
+              sans: ['Noto Sans', 'ui-sans-serif', 'system-ui'],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      html { scroll-behavior: smooth; }
+      /* Gentle glow/pulse for the mantra */
+      @keyframes chantPulse {
+        0%, 100% { opacity: .8; text-shadow: 0 0 0 rgba(255,255,255,0); }
+        50% { opacity: 1; text-shadow: 0 0 12px rgba(255,255,255,.6); }
+      }
+      .chant-animate { animation: chantPulse 2.8s ease-in-out infinite; }
+      /* Respect reduced motion */
+      @media (prefers-reduced-motion: reduce) {
+        .chant-animate { animation: none !important; }
+        .chant-ticker { animation: none !important; }
+      }
+      /* Scrolling ticker */
+      @keyframes ticker {
+        0% { transform: translateX(100%); }
+        100% { transform: translateX(-100%); }
+      }
+      .chant-ticker {
+        display: inline-block;
+        white-space: nowrap;
+        animation: ticker 20s linear infinite;
+      }
+    </style>
+  </head>
+  <body class="bg-paper font-sans text-ink">
+    <div class="relative flex min-h-screen flex-col overflow-x-hidden">
+      <!-- Header -->
+      <header class="sticky top-0 z-30 border-b border-tint bg-paper/80 backdrop-blur">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-10">
+          <div class="flex h-16 items-center justify-between">
+            <a href="#" class="flex items-center gap-3" aria-label="Temple home">
+              <svg class="h-5 w-5" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M24 .757 47.243 24 24 47.243.757 24 24 .757Zm-3 35V12.243L9.243 24 21 35.757Z" fill="currentColor"/>
+              </svg>
+              <span class="text-base font-bold tracking-tight sm:text-lg">Temple Name</span>
+            </a>
+
+            <!-- Desktop nav -->
+            <nav class="hidden items-center gap-8 md:flex" aria-label="Primary">
+              <a class="text-sm font-medium hover:opacity-80" href="#about">About Us</a>
+            </nav>
+
+            <!-- Mobile menu button -->
+            <button
+              class="md:hidden inline-flex h-10 w-10 items-center justify-center rounded-lg border border-tint"
+              aria-controls="mobile-menu" aria-expanded="false" id="menu-btn"
+            >
+              <span class="sr-only">Open main menu</span>
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Mobile menu panel -->
+        <div id="mobile-menu" class="hidden border-t border-tint bg-paper md:hidden">
+          <div class="mx-auto max-w-7xl px-4 py-3 sm:px-6 lg:px-10">
+            <nav class="flex flex-col gap-3" aria-label="Mobile">
+              <a class="rounded-md px-2 py-2 text-sm font-medium hover:bg-tint/40" href="#about">About Us</a>
+            </nav>
+          </div>
+        </div>
+      </header>
+
+      <!-- Page wrapper -->
+      <main class="flex-1">
+        <!-- Hero -->
+        <section class="@container">
+          <div class="@[480px]:p-4">
+            <div
+              class="relative flex min-h-[420px] flex-col items-center justify-center gap-4 bg-cover bg-center bg-no-repeat p-6 text-center sm:rounded-xl md:min-h-[520px] md:p-10"
+              style="background-image: linear-gradient(rgba(0,0,0,.15), rgba(0,0,0,.45)), url('https://upload.wikimedia.org/wikipedia/commons/d/d2/Shree_Swami_Samarth_Temple_Akkalkot.jpg');"
+              role="img" aria-label="Temple with scenic background"
+            >
+              <div class="mx-auto max-w-4xl">
+                <h1 class="text-3xl font-black text-white sm:text-4xl md:text-5xl">Welcome to Temple Name</h1>
+                <p class="mt-3 text-sm text-white/90 sm:text-base md:text-lg">A sanctuary of peace and spirituality, dedicated to fostering a deeper connection with the divine.</p>
+                <p class="mt-5 text-lg font-semibold text-white sm:text-xl md:text-2xl chant-animate">ॐ श्रीराम कृष्णनाथा दयासागरा कृपा करा | दयासागरा कृपा करा</p>
+                <div class="overflow-hidden w-full mt-4">
+                  <div class="chant-ticker text-white text-base sm:text-lg">ॐ श्रीराम कृष्णनाथा दयासागरा कृपा करा • दयासागरा कृपा करा • ॐ श्रीराम कृष्णनाथा दयासागरा कृपा करा • दयासागरा कृपा करा</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- About Us (image left, text right) -->
+        <section id="about" class="pt-10 pb-16">
+          <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-10 xl:px-40">
+            <h2 class="text-[22px] font-bold">About Us</h2>
+            <div class="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-10">
+              <figure>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/d/d2/Shree_Swami_Samarth_Temple_Akkalkot.jpg" alt="Samadhi Mandir" class="w-full rounded-lg object-cover aspect-[4/3]" />
+                <figcaption class="mt-2 text-xs text-neutral-600">समाधी मंदिर (प्रतिनिधिक चित्र)</figcaption>
+              </figure>
+              <div>
+                <p class="text-base leading-relaxed">श्रीरामकृष्ण जांभेकर महाराज हे थोर संत होते. भगवान श्रीदत्तात्रेय व अक्कलकोट स्वामी समर्थ यांचे परम भक्त होते. त्यांनी आपले संपूर्ण जीवन भक्ती व सेवेत व्यतीत केले. महाराष्ट्रात जन्मलेले महाराज भक्ती व सेवाभावाचा संदेश सर्वत्र पसरवत होते. त्यांचे जीवन साधेपणा, विनम्रता व करुणा यांचे उत्तम उदाहरण होते. अनेकांना त्यांनी धर्म, श्रद्धा व सदाचाराचा मार्ग दाखवला. त्यांनी सत्य, दानधर्म व ईश्वरस्मरण यांवर भर दिला. भक्तांचे संकट दूर करण्यासाठी अनेक चमत्कार घडल्याची आख्यायिका आहे. त्यांच्या सान्निध्यात लोकांना आधार व समाधान मिळायचे. त्यांच्या आशीर्वादामुळे अनेकांना समस्यांवर मात करता आली. स्वामी समर्थांवर त्यांची अढळ श्रद्धा होती. गुरुचरणी शरण जावे हेच त्यांनी नेहमी सांगितले. आजही त्यांचे समाधी मंदिर श्रद्धेचे ठिकाण आहे. भक्तगण समाधी स्थळी जाऊन आशीर्वाद घेतात. मंदिराचा परिसर शांततेने व भक्तिभावाने नटलेला असतो. प्रत्येक वर्षी महाराजांची पुण्यतिथी भक्तिभावाने साजरी केली जाते. त्यांची शिकवण आजही नवीन पिढ्यांना प्रेरणा देते. भक्तांना ते आजही रक्षण करतात असा दृढ विश्वास आहे. त्यांचे जीवन श्रद्धा, सेवा व भक्तीचा आदर्श आहे.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <!-- Footer -->
+      <footer class="border-t border-tint bg-paper">
+        <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-10">
+          <div class="flex flex-col items-center justify-between gap-3 sm:flex-row">
+            <p class="text-xs">© <span id="year"></span> Temple Name. All rights reserved.</p>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script>
+      // Mobile menu toggle
+      const btn = document.getElementById('menu-btn');
+      const panel = document.getElementById('mobile-menu');
+      if (btn && panel) {
+        btn.addEventListener('click', () => {
+          const open = panel.classList.toggle('hidden');
+          btn.setAttribute('aria-expanded', String(!open));
+        });
+      }
+      // Year in footer
+      document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
+  </body>
+</html>
