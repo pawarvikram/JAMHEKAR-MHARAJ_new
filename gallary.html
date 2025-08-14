@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Temple Gallery – Slide + Slow Blur</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #fcf9f8;
+      --ink: #1c110d;
+      --interval: 3800ms;
+      --duration: 1200ms;
+      --blur: 6px;
+      --zoom: 1.03;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; background: var(--bg); color: var(--ink);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans", "Noto Serif", Arial, sans-serif;
+    }
+    .wrap { max-width: 960px; margin: 24px auto 56px; padding: 0 16px; }
+    h1 { margin: 8px 0 12px; font-size: 28px; }
+    h3 { margin: 18px 0 10px; font-size: 18px; }
+    .card { position: relative; border-radius: 12px; overflow: hidden; background: #fff; }
+    .viewport { overflow: hidden; border-radius: 12px; }
+    .track {
+      display: flex;
+      will-change: transform, filter;
+      transform: translateX(0);
+      transition: transform var(--duration) ease, filter var(--duration) ease;
+      touch-action: pan-y;
+    }
+    .no-trans { transition: none !important; }
+    .slide { flex: 0 0 100%; position: relative; }
+    .media {
+      width: 100%; aspect-ratio: 16/9;
+      background-size: cover; background-position: center;
+      filter: none; transform: scale(1);
+      transition: filter var(--duration) ease, transform var(--duration) ease;
+    }
+    .is-animating .media {
+      filter: blur(var(--blur));
+      transform: scale(var(--zoom));
+    }
+    .controls {
+      position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%);
+      display: flex; gap: 8px; background: rgba(255,255,255,.7); backdrop-filter: blur(6px);
+      padding: 4px 6px; border-radius: 8px; align-items: center;
+    }
+    .btn {
+      appearance: none; border: 0; padding: 6px 10px; border-radius: 8px; cursor: pointer;
+      background: #f2ebe9; color: var(--ink); font-weight: 600; font-size: 12px;
+    }
+    .btn:active { transform: translateY(1px); }
+    @media (prefers-reduced-motion: reduce) {
+      .track, .media { transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Temple Events Photo Gallery</h1>
+    <p>Single, automated slideshow with a slow blur effect while sliding. Hover (or touch & hold) to pause. Swipe to navigate.</p>
+    <section aria-label="Gallery">
+      <h3>Highlights</h3>
+      <div class="card" id="slider">
+        <div class="viewport">
+          <div class="track" id="track">
+            <div class="slide">
+              <div class="media" style='background-image:url("Images/appa_mharj_book.jpg");'></div>
+            </div>
+            <div class="slide">
+              <div class="media" style='background-image:url("Images/mandir_entrance.jpeg");'></div>
+            </div>
+            <div class="slide">
+              <div class="media" style='background-image:url("Images/namdev_mharaj_kelakr_book.jpeg");'></div>
+            </div>
+          </div>
+        </div>
+        <div class="controls">
+          <button class="btn" data-prev aria-label="Previous">◀</button>
+          <button class="btn" data-toggle aria-pressed="true" aria-label="Pause">Pause</button>
+          <button class="btn" data-next aria-label="Next">▶</button>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+    (function () {
+      const root = document.getElementById("slider");
+      const track = document.getElementById("track");
+      const prevBtn = root.querySelector("[data-prev]");
+      const nextBtn = root.querySelector("[data-next]");
+      const toggleBtn = root.querySelector("[data-toggle]");
+      const slides = Array.from(track.children);
+      const firstClone = slides[0].cloneNode(true);
+      const lastClone = slides[slides.length - 1].cloneNode(true);
+      track.insertBefore(lastClone, slides[0]);
+      track.appendChild(firstClone);
+      const all = Array.from(track.children);
+      const viewport = root.querySelector(".viewport");
+      let width = viewport.clientWidth;
+      let index = 1;
+      let timer = null;
+      let autoplay = true;
+      const interval = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--interval')) || 3800;
+      function setAnimating(on) {
+        track.classList.toggle("is-animating", on);
+      }
+      function translate(noTrans = false){
+        if(noTrans) track.classList.add("no-trans");
+        track.style.transform = "translateX(" + (-index * width) + "px)";
+        if(noTrans){
+          track.getBoundingClientRect();
+          track.classList.remove("no-trans");
+        }
+      }
+      translate(true);
+      new ResizeObserver(()=>{ width = viewport.clientWidth; translate(true); }).observe(viewport);
+      function goTo(i){
+        index = i;
+        setAnimating(true);
+        track.style.transition = "transform var(--duration) ease, filter var(--duration) ease";
+        translate();
+      }
+      function start(){
+        if(timer || !autoplay) return;
+        timer = setInterval(()=> goTo(index + 1), interval);
+        toggleBtn.textContent = "Pause";
+        toggleBtn.setAttribute("aria-pressed", "true");
+        toggleBtn.setAttribute("aria-label", "Pause");
+      }
+      function stop(){
+        clearInterval(timer);
+        timer = null;
+        toggleBtn.textContent = "Play";
+        toggleBtn.setAttribute("aria-pressed", "false");
+        toggleBtn.setAttribute("aria-label", "Play");
+      }
+      track.addEventListener("transitionend", () => {
+        setAnimating(false);
+        if (index === all.length - 1) { index = 1; translate(true); }
+        else if (index === 0) { index = all.length - 2; translate(true); }
+      });
+      prevBtn.addEventListener("click", ()=> goTo(index - 1));
+      nextBtn.addEventListener("click", ()=> goTo(index + 1));
+      toggleBtn.addEventListener("click", ()=> { if (timer) { autoplay = false; stop(); } else { autoplay = true; start(); } });
+      let hold;
+      root.addEventListener("mouseenter", stop);
+      root.addEventListener("mouseleave", ()=> autoplay && start());
+      root.addEventListener("touchstart", ()=> { hold = setTimeout(stop, 200); }, {passive:true});
+      root.addEventListener("touchend", ()=> { clearTimeout(hold); autoplay && start(); });
+      let dragging=false, startX=0, dx=0;
+      const down = e => {
+        dragging = true;
+        startX = (e.touches ? e.touches[0].clientX : e.clientX);
+        dx = 0;
+        stop();
+        track.classList.add("no-trans");
+        setAnimating(true);
+      };
+      const move = e => {
+        if (!dragging) return;
+        const x = (e.touches ? e.touches[0].clientX : e.clientX);
+        dx = x - startX;
+        track.style.transform = "translateX(" + (-index * width + dx) + "px)";
+      };
+      const up = () => {
+        if (!dragging) return;
+        dragging = false;
+        track.classList.remove("no-trans");
+        if (Math.abs(dx) > width * 0.2) {
+          goTo(index + (dx > 0 ? -1 : 1));
+        } else {
+          setAnimating(false);
+          translate();
+        }
+        autoplay && start();
+      };
+      // Changed from root to viewport for better mouse drag usability
+      viewport.addEventListener("mousedown", down); 
+      viewport.addEventListener("mousemove", move); 
+      viewport.addEventListener("mouseup", up); 
+      viewport.addEventListener("mouseleave", up);
+      root.addEventListener("touchstart", down, {passive:true}); 
+      root.addEventListener("touchmove", move, {passive:true}); 
+      root.addEventListener("touchend", up);
+      document.addEventListener("visibilitychange", ()=> { if(document.hidden) stop(); else autoplay && start(); });
+      if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        autoplay = false;
+        stop();
+      } else {
+        start();
+      }
+    })();
+  </script>
+</body>
+</html>
